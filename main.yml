@@ -1,32 +1,13 @@
 ---
-- hosts: all
+- hosts: localhost
 
   vars_files:
     - default.config.yml
 
-  pre_tasks:
-    - name: Include playbook configuration.
-      include_vars: "{{ item }}"
-      with_fileglob:
-        - "{{ playbook_dir }}/config.yml"
-      tags: ['always']
-
   tasks:
-    - import_tasks: tasks/sudoers.yml
-      when: configure_sudoers
-      tags: ['sudoers']
+    - name: Update apt packages
+      become: true
+      apt:
+        name: '{{ install_packages }}' 
+        update_cache: yes
 
-    - import_tasks: tasks/terminal.yml
-      when: configure_terminal
-      tags: ['terminal']
-
-    - import_tasks: tasks/osx.yml
-      when: configure_osx
-      tags: ['osx']
-
-    - name: Run configured post-provision ansible task files.
-      include_tasks: "{{ outer_item }}"
-      loop_control:
-        loop_var: outer_item
-      with_fileglob: "{{ post_provision_tasks|default(omit) }}"
-      tags: ['post']
