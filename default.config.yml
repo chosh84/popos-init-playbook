@@ -16,5 +16,6 @@ install_packages:
   - neovim
   - docker
   - ubuntu-restricted-extras
+  - htop
 
 
